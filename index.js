@@ -4,23 +4,19 @@ let input = require('fs')
   .trim()
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
+const meetings = input
+  .slice(1)
+  .map(line => line.split(' ').map(Number))
+  .sort((a, b) => a[1] - b[1] || a[0] - b[0]);
 
-const sortedA = input[1]
-  .split(' ')
-  .map(Number)
-  .sort((a, b) => a - b);
-const B = input[3].split(' ').map(Number);
+let count = 0;
+let lastEnd = 0;
 
-function binarySearch(arr, target) {
-  let left = 0;
-  let right = arr.length - 1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    if (arr[mid] === target) return 1;
-    else if (arr[mid] < target) left = mid + 1;
-    else right = mid - 1;
+for (const [s, e] of meetings) {
+  if (s >= lastEnd) {
+    count++;
+    lastEnd = e;
   }
-  return 0;
 }
-console.log(B.map(target => binarySearch(sortedA, target)).join('\n'));
+
+console.log(count);
