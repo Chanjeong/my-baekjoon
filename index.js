@@ -6,14 +6,25 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const N = +input[0];
-const arr = input
-  .slice(1)
+const arr = input[1]
+  .split(' ')
   .map(Number)
-  .sort((a, b) => b - a);
+  .sort((a, b) => a - b);
+const x = +input[2];
 
-let maxWeight = 0;
-for (let i = 0; i < N; i++) {
-  maxWeight = Math.max(maxWeight, arr[i] * (i + 1));
+let left = 0;
+let right = arr.length - 1;
+let count = 0;
+while (left < right) {
+  let sum = arr[left] + arr[right];
+  if (sum === x) {
+    count++;
+    left++;
+    right--;
+  } else if (sum < x) {
+    left++;
+  } else {
+    right--;
+  }
 }
-
-console.log(maxWeight);
+console.log(count);
