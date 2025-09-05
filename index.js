@@ -4,10 +4,7 @@ let input = require('fs')
   .trim()
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
+const [n, k] = input[0].split(' ').map(Number);
+const a = input[1].split(' ').map(Number);
 
-const n = input[0];
-const arr = [];
-for (let i = 0; i < n.length; i++) {
-  arr.push(n.slice(n.length - 1 - i, n.length));
-}
-console.log(arr.sort().join('\n'));
+console.log(a.sort((a, b) => a - b)[k - 1]);
