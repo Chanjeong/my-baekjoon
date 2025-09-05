@@ -4,7 +4,10 @@ let input = require('fs')
   .trim()
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
-const [n, k] = input[0].split(' ').map(Number);
-const a = input[1].split(' ').map(Number);
 
-console.log(a.sort((a, b) => a - b)[k - 1]);
+const n = input[0].split('').map(Number);
+const sorted = n.sort((a, b) => b - a);
+
+const sum = sorted.reduce((acc, curr) => acc + curr, 0);
+if (sum % 3 !== 0 || sorted[sorted.length - 1] !== 0) console.log(-1);
+else console.log(sorted.join(''));
