@@ -5,9 +5,9 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const n = input[0].split('').map(Number);
-const sorted = n.sort((a, b) => b - a);
+let arr = [];
+for (let i = 1; i < input.length; i++) {
+  arr.push(...input[i].split(' ').map(Number));
+}
 
-const sum = sorted.reduce((acc, curr) => acc + curr, 0);
-if (sum % 3 !== 0 || sorted[sorted.length - 1] !== 0) console.log(-1);
-else console.log(sorted.join(''));
+console.log(arr.sort((a, b) => a - b).join(' '));
