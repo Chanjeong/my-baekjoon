@@ -5,21 +5,17 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const T = Number(input[0]);
+const n = Number(input[0]);
+const arr = input[1].split(' ').map(Number);
 
-for (let i = 0; i < T; i++) {
-  const [n, k] = [+input[i * 2 + 1], +input[i * 2 + 2]];
+const dp = new Array(n).fill(1);
 
-  const dp = Array.from({ length: n + 1 }, () => Array(k + 1).fill(0));
-
-  for (let j = 0; j < k; j++) {
-    dp[0][j + 1] = j + 1;
-  }
-
-  for (let floor = 1; floor <= n; floor++) {
-    for (let room = 1; room <= k; room++) {
-      dp[floor][room] = dp[floor][room - 1] + dp[floor - 1][room];
+for (let i = 1; i < arr.length; i++) {
+  for (let j = 0; j < i; j++) {
+    if (arr[j] < arr[i]) {
+      dp[i] = Math.max(dp[i], dp[j] + 1);
     }
   }
-  console.log(dp[n][k]);
 }
+
+console.log(Math.max(...dp));
