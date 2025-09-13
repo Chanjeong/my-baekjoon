@@ -6,14 +6,12 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const n = Number(input[0]);
+const arr = input[1].split(' ').map(Number);
 
-for (let i = 1; i <= n; i++) {
-  const T = Number(input[i]);
-  const dp = new Array(T + 1).fill(1);
-  dp[1] = dp[2] = dp[3] = 1;
-
-  for (let j = 4; j <= T; j++) {
-    dp[j] = dp[j - 3] + dp[j - 2];
-  }
-  console.log(dp[T]);
+let currentSum = arr[0];
+let maxNum = arr[0];
+for (let i = 1; i < n; i++) {
+  currentSum = Math.max(arr[i], currentSum + arr[i]);
+  maxNum = Math.max(maxNum, currentSum);
 }
+console.log(maxNum);
