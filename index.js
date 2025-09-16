@@ -5,26 +5,13 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const [N, K] = input[0].split(' ').map(Number);
+const n = Number(input[0]);
+const dp = new Array(n).fill(0);
 
-const items = [];
-for (let i = 1; i <= N; i++) {
-  const [W, V] = input[i].split(' ').map(Number);
-  items.push({ weight: W, value: V });
+dp[1] = 1;
+dp[2] = 3;
+
+for (let i = 3; i <= n; i++) {
+  dp[i] = (dp[i - 1] + dp[i - 2] * 2) % 10007;
 }
-
-const dp = Array.from({ length: N + 1 }, () => Array(K + 1).fill(0));
-
-for (let i = 1; i <= N; i++) {
-  const { weight, value } = items[i - 1];
-
-  for (let w = 0; w <= K; w++) {
-    dp[i][w] = dp[i - 1][w];
-
-    if (w >= weight) {
-      dp[i][w] = Math.max(dp[i][w], dp[i - 1][w - weight] + value);
-    }
-  }
-}
-
-console.log(dp[N][K]);
+console.log(dp[n]);
