@@ -6,18 +6,23 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const n = Number(input[0]);
-const wine = input.slice(1).map(Number);
-const dp = new Array(n + 1).fill(0);
 
-dp[1] = wine[0];
-dp[2] = wine[0] + wine[1];
-dp[3] = Math.max(wine[0] + wine[1], wine[0] + wine[2], wine[1] + wine[2]);
+const dp = Array.from({ length: n + 1 }, () => new Array(10).fill(0));
 
-for (let i = 4; i <= n; i++) {
-  dp[i] = Math.max(
-    dp[i - 3] + wine[i - 2] + wine[i - 1],
-    dp[i - 2] + wine[i - 1],
-    dp[i - 1]
-  );
+for (let i = 1; i <= 9; i++) {
+  dp[1][i] = 1;
 }
-console.log(dp[n]);
+
+for (let i = 2; i <= n; i++) {
+  for (let j = 0; j <= 9; j++) {
+    if (j === 0) {
+      dp[i][j] = dp[i - 1][1] % 1000000000;
+    } else if (j === 9) {
+      dp[i][j] = dp[i - 1][8] % 1000000000;
+    } else {
+      dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j + 1]) % 1000000000;
+    }
+  }
+}
+const result = dp[n].reduce((acc, cum) => acc + cum, 0) % 1000000000;
+console.log(result);
