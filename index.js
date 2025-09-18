@@ -6,23 +6,18 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const n = Number(input[0]);
+const schedule = input.slice(1).map(el => el.split(' ').map(Number));
 
-const dp = Array.from({ length: n + 1 }, () => new Array(10).fill(0));
+const dp = new Array(n + 2).fill(0);
 
-for (let i = 1; i <= 9; i++) {
-  dp[1][i] = 1;
-}
+for (let i = n; i > 0; i--) {
+  const [t, p] = schedule[i - 1];
 
-for (let i = 2; i <= n; i++) {
-  for (let j = 0; j <= 9; j++) {
-    if (j === 0) {
-      dp[i][j] = dp[i - 1][1] % 1000000000;
-    } else if (j === 9) {
-      dp[i][j] = dp[i - 1][8] % 1000000000;
-    } else {
-      dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j + 1]) % 1000000000;
-    }
+  if (i + t - 1 > n) {
+    dp[i] = dp[i + 1];
+  } else {
+    dp[i] = Math.max(dp[i + 1], dp[i + t] + p);
   }
 }
-const result = dp[n].reduce((acc, cum) => acc + cum, 0) % 1000000000;
-console.log(result);
+
+console.log(Math.max(...dp));
