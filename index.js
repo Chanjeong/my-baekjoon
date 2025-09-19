@@ -6,18 +6,16 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const n = Number(input[0]);
-const schedule = input.slice(1).map(el => el.split(' ').map(Number));
 
-const dp = new Array(n + 2).fill(0);
+// 이친수는 피보나치 수열과 같습니다
+// dp[i] = i자리 이친수의 개수
+const dp = new Array(n + 1).fill(0);
 
-for (let i = n; i > 0; i--) {
-  const [t, p] = schedule[i - 1];
+dp[1] = 1; // 1자리: 1
+dp[2] = 1; // 2자리: 10
 
-  if (i + t - 1 > n) {
-    dp[i] = dp[i + 1];
-  } else {
-    dp[i] = Math.max(dp[i + 1], dp[i + t] + p);
-  }
+for (let i = 3; i <= n; i++) {
+  dp[i] = BigInt(dp[i - 1]) + BigInt(dp[i - 2]);
 }
 
-console.log(Math.max(...dp));
+console.log(dp[n].toString());
