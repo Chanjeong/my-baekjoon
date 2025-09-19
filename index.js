@@ -5,15 +5,21 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const n = Number(input[0]);
+const str1 = input[0].trim();
+const str2 = input[1].trim();
 
-const dp = new Array(n + 1).fill(0);
+const dp = Array.from({ length: str1.length + 1 }, () =>
+  Array(str2.length + 1).fill(0)
+);
 
-dp[1] = 1;
-dp[2] = 1;
-
-for (let i = 3; i <= n; i++) {
-  dp[i] = dp[i - 1] + dp[i - 2];
+for (let i = 1; i <= str1.length; i++) {
+  for (let j = 1; j <= str2.length; j++) {
+    if (str1[i - 1] === str2[j - 1]) {
+      dp[i][j] = dp[i - 1][j - 1] + 1;
+    } else {
+      dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
 }
 
-console.log(dp[n]);
+console.log(dp[str1.length][str2.length]);
