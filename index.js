@@ -5,13 +5,26 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const n = Number(input[0]);
-const dp = new Array(n + 1).fill(0);
+const T = Number(input[0]);
 
-dp[1] = 1;
-dp[2] = 2;
+for (let i = 1; i < input.length; i += 3) {
+  const n = Number(input[i]);
 
-for (let i = 3; i <= n; i++) {
-  dp[i] = dp[i - 2] + (dp[i - 1] % 15746);
+  const sticker = [
+    input[i + 1].split(' ').map(Number),
+    input[i + 2].split(' ').map(Number)
+  ];
+
+  const dp = Array.from({ length: 3 }, () => new Array(n).fill(0));
+
+  dp[0][0] = 0;
+  dp[1][0] = sticker[0][0];
+  dp[2][0] = sticker[1][0];
+
+  for (let j = 1; j <= n; j++) {
+    dp[0][j] = Math.max(dp[0][j - 1], dp[1][j - 1], dp[2][j - 1]);
+    dp[1][j] = Math.max(dp[0][j - 1], dp[2][j - 1]) + sticker[0][j];
+    dp[2][j] = Math.max(dp[0][j - 1], dp[1][j - 1]) + sticker[1][j];
+  }
+  console.log(Math.max(dp[0][n - 1], dp[1][n - 1], dp[2][n - 1]));
 }
-console.log(dp[n] % 15746);
