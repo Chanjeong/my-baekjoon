@@ -5,26 +5,17 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const T = Number(input[0]);
+const [n, k] = input[0].split(' ').map(Number);
 
-for (let i = 1; i < input.length; i += 3) {
-  const n = Number(input[i]);
+const coins = input.slice(1).map(Number);
 
-  const sticker = [
-    input[i + 1].split(' ').map(Number),
-    input[i + 2].split(' ').map(Number)
-  ];
+const dp = new Array(k + 1).fill(0);
 
-  const dp = Array.from({ length: 3 }, () => new Array(n).fill(0));
+dp[0] = 1;
 
-  dp[0][0] = 0;
-  dp[1][0] = sticker[0][0];
-  dp[2][0] = sticker[1][0];
-
-  for (let j = 1; j <= n; j++) {
-    dp[0][j] = Math.max(dp[0][j - 1], dp[1][j - 1], dp[2][j - 1]);
-    dp[1][j] = Math.max(dp[0][j - 1], dp[2][j - 1]) + sticker[0][j];
-    dp[2][j] = Math.max(dp[0][j - 1], dp[1][j - 1]) + sticker[1][j];
+for (let coin of coins) {
+  for (let i = coin; i <= k; i++) {
+    dp[i] += dp[i - coin];
   }
-  console.log(Math.max(dp[0][n - 1], dp[1][n - 1], dp[2][n - 1]));
 }
+console.log(dp[k].toString());
