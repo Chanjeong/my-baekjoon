@@ -5,17 +5,31 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const [n, k] = input[0].split(' ').map(Number);
+const n = Number(input[0]);
 
-const coins = input.slice(1).map(Number);
+const arr = input[1].split(' ').map(Number);
 
-const dp = new Array(k + 1).fill(0);
+const inc = new Array(n).fill(1);
+const dec = new Array(n).fill(1);
 
-dp[0] = 1;
-
-for (let coin of coins) {
-  for (let i = coin; i <= k; i++) {
-    dp[i] += dp[i - coin];
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < i; j++) {
+    if (arr[j] < arr[i]) {
+      inc[i] = Math.max(inc[i], inc[j] + 1);
+    }
   }
 }
-console.log(dp[k].toString());
+
+for (let i = n - 1; i >= 0; i--) {
+  for (let j = n - 1; j > i; j--) {
+    if (arr[i] > arr[j]) {
+      dec[i] = Math.max(dec[i], dec[j] + 1);
+    }
+  }
+}
+
+let maxLength = 0;
+for (let i = 0; i < n; i++) {
+  maxLength = Math.max(maxLength, dec[i] + inc[i] - 1);
+}
+console.log(maxLength);
