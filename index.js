@@ -7,29 +7,17 @@ let input = require('fs')
 
 const n = Number(input[0]);
 
-const arr = input[1].split(' ').map(Number);
+const dp = Array.from({ length: n + 1 }, () => new Array(10).fill(0));
 
-const inc = new Array(n).fill(1);
-const dec = new Array(n).fill(1);
-
-for (let i = 0; i < n; i++) {
-  for (let j = 0; j < i; j++) {
-    if (arr[j] < arr[i]) {
-      inc[i] = Math.max(inc[i], inc[j] + 1);
-    }
+for (let i = 0; i <= 9; i++) {
+  dp[1][i] = 1;
+}
+for (let i = 2; i <= n; i++) {
+  for (let j = 0; j <= 9; j++) {
+    dp[i][j] =
+      dp[i - 1].slice(0, j + 1).reduce((acc, cum) => acc + cum, 0) % 10007;
   }
 }
 
-for (let i = n - 1; i >= 0; i--) {
-  for (let j = n - 1; j > i; j--) {
-    if (arr[i] > arr[j]) {
-      dec[i] = Math.max(dec[i], dec[j] + 1);
-    }
-  }
-}
-
-let maxLength = 0;
-for (let i = 0; i < n; i++) {
-  maxLength = Math.max(maxLength, dec[i] + inc[i] - 1);
-}
-console.log(maxLength);
+const sum = dp[n].reduce((acc, cum) => acc + cum, 0) % 10007;
+console.log(sum);
