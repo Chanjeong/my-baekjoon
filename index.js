@@ -5,14 +5,18 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-let n = Number(input[0]);
+const [n, k] = input[0].split(' ').map(Number);
 
-let dp = new Array(n + 1).fill(Infinity);
-dp[0] = 0;
+const dp = Array.from({ length: n + 1 }, () => new Array(k + 1).fill(0));
+
+for (let i = 0; i <= n; i++) {
+  dp[i][0] = 1;
+}
 
 for (let i = 1; i <= n; i++) {
-  for (let j = 1; j * j <= i; j++) {
-    dp[i] = Math.min(dp[i], dp[i - j * j] + 1);
+  for (let j = 1; j <= Math.min(i, k); j++) {
+    dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % 10007;
   }
 }
-console.log(dp);
+
+console.log(dp[n][k]);
