@@ -5,18 +5,42 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const [n, k] = input[0].split(' ').map(Number);
+const dp = Array.from({ length: 21 }, () =>
+  Array.from({ length: 21 }, () => new Array(21).fill(-1))
+);
 
-const dp = Array.from({ length: n + 1 }, () => new Array(k + 1).fill(0));
-
-for (let i = 0; i <= n; i++) {
-  dp[i][0] = 1;
-}
-
-for (let i = 1; i <= n; i++) {
-  for (let j = 1; j <= Math.min(i, k); j++) {
-    dp[i][j] = (dp[i - 1][j - 1] + dp[i - 1][j]) % 10007;
+function recursive(a, b, c) {
+  if (a <= 0 || b <= 0 || c <= 0) {
+    return 1;
   }
+
+  if (a > 20 || b > 20 || c > 20) {
+    return recursive(20, 20, 20);
+  }
+
+  if (dp[a][b][c] !== -1) {
+    return dp[a][b][c];
+  }
+
+  if (a < b && b < c) {
+    dp[a][b][c] =
+      recursive(a, b, c - 1) +
+      recursive(a, b - 1, c - 1) -
+      recursive(a, b - 1, c);
+  } else {
+    dp[a][b][c] =
+      recursive(a - 1, b, c) +
+      recursive(a - 1, b - 1, c) +
+      recursive(a - 1, b, c - 1) -
+      recursive(a - 1, b - 1, c - 1);
+  }
+  return dp[a][b][c];
 }
 
-console.log(dp[n][k]);
+for (let i = 0; i < input.length; i++) {
+  const [a, b, c] = input[i].split(' ').map(Number);
+
+  if (a === -1 && b === -1 && c === -1) break;
+
+  console.log(`w(${a}, ${b}, ${c}) = ${recursive(a, b, c)}`);
+}
