@@ -5,42 +5,18 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const dp = Array.from({ length: 21 }, () =>
-  Array.from({ length: 21 }, () => new Array(21).fill(-1))
-);
+const [n, k] = input[0].split(' ').map(Number);
 
-function recursive(a, b, c) {
-  if (a <= 0 || b <= 0 || c <= 0) {
-    return 1;
-  }
+const coins = input.slice(1).map(Number);
 
-  if (a > 20 || b > 20 || c > 20) {
-    return recursive(20, 20, 20);
+const dp = new Array(k + 1).fill(Infinity);
+dp[0] = 0;
+for (let coin of coins) {
+  for (let i = coin; i <= k; i++) {
+    if (dp[i - coin] !== Infinity) {
+      dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+    }
   }
-
-  if (dp[a][b][c] !== -1) {
-    return dp[a][b][c];
-  }
-
-  if (a < b && b < c) {
-    dp[a][b][c] =
-      recursive(a, b, c - 1) +
-      recursive(a, b - 1, c - 1) -
-      recursive(a, b - 1, c);
-  } else {
-    dp[a][b][c] =
-      recursive(a - 1, b, c) +
-      recursive(a - 1, b - 1, c) +
-      recursive(a - 1, b, c - 1) -
-      recursive(a - 1, b - 1, c - 1);
-  }
-  return dp[a][b][c];
 }
-
-for (let i = 0; i < input.length; i++) {
-  const [a, b, c] = input[i].split(' ').map(Number);
-
-  if (a === -1 && b === -1 && c === -1) break;
-
-  console.log(`w(${a}, ${b}, ${c}) = ${recursive(a, b, c)}`);
-}
+console.log(dp);
+console.log(dp[k] === Infinity ? -1 : dp[k]);
