@@ -5,18 +5,21 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const [n, k] = input[0].split(' ').map(Number);
+const n = +input[0];
 
-const coins = input.slice(1).map(Number);
+let wires = input.slice(1).map(e => e.split(' ').map(Number));
 
-const dp = new Array(k + 1).fill(Infinity);
-dp[0] = 0;
-for (let coin of coins) {
-  for (let i = coin; i <= k; i++) {
-    if (dp[i - coin] !== Infinity) {
-      dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+wires = wires.sort((a, b) => a[0] - b[0]);
+const bNum = wires.map(a => a[1]);
+
+const dp = new Array(n).fill(1);
+
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < i; j++) {
+    if (bNum[j] < bNum[i]) {
+      dp[i] = Math.max(dp[i], dp[j] + 1);
     }
   }
 }
-console.log(dp);
-console.log(dp[k] === Infinity ? -1 : dp[k]);
+
+console.log(n - Math.max(...dp));
