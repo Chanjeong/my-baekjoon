@@ -5,21 +5,22 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const n = +input[0];
+const [n, k] = input[0].split(' ').map(Number);
 
-let wires = input.slice(1).map(e => e.split(' ').map(Number));
+const dp = Array.from({ length: k + 1 }, () => new Array(n + 1).fill(0));
 
-wires = wires.sort((a, b) => a[0] - b[0]);
-const bNum = wires.map(a => a[1]);
+for (let i = 0; i <= n; i++) {
+  dp[1][i] = 1;
+}
 
-const dp = new Array(n).fill(1);
-
-for (let i = 0; i < n; i++) {
-  for (let j = 0; j < i; j++) {
-    if (bNum[j] < bNum[i]) {
-      dp[i] = Math.max(dp[i], dp[j] + 1);
+for (let i = 2; i <= k; i++) {
+  for (let j = 0; j <= n; j++) {
+    if (j === 0) {
+      dp[i][j] = dp[i - 1][j];
+    } else {
+      dp[i][j] = (dp[i][j - 1] + dp[i - 1][j]) % 1000000000;
     }
   }
 }
 
-console.log(n - Math.max(...dp));
+console.log(dp[k][n]);
