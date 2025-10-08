@@ -5,27 +5,41 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const n = +input[0];
-let fibCount = 0;
-let fibonacciCount = 0;
+const [str1, str2] = input.slice(0).map(e => e.trim());
 
-function fib(n) {
-  if (n === 1 || n === 2) {
-    fibCount += 1;
-    return 1;
+const dp = Array.from({ length: str1.length + 1 }, () =>
+  new Array(str2.length + 1).fill(0)
+);
+
+for (let i = 1; i <= str1.length; i++) {
+  for (let j = 1; j <= str2.length; j++) {
+    if (str1[i - 1] === str2[j - 1]) {
+      dp[i][j] = dp[i - 1][j - 1] + 1;
+    } else {
+      dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+}
+
+let maxLength = dp[str1.length][str2.length];
+let result = '';
+let i = str1.length;
+let j = str2.length;
+
+while (i > 0 && j > 0) {
+  if (str1[i - 1] === str2[j - 1]) {
+    result = str1[i - 1] + result;
+    i--;
+    j--;
   } else {
-    return fib(n - 1) + fib(n - 2);
+    if (dp[i - 1][j] > dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
   }
 }
-
-function fibonacci(n) {
-  const dp = new Array(n + 1).fill(0);
-  dp[1] = dp[2] = 1;
-  for (let i = 3; i <= n; i++) {
-    dp[n] = dp[n - 1] + dp[n - 2];
-    fibonacciCount += 1;
-  }
+console.log(maxLength);
+if (maxLength) {
+  console.log(result);
 }
-fib(n);
-fibonacci(n);
-console.log(fibCount, fibonacciCount);
