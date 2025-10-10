@@ -7,44 +7,27 @@ let input = require('fs')
 
 const n = +input[0];
 
-const house = input.slice(1).map(e => e.split(' ').map(Number));
+const game = input.slice(1).map(e => e.split(' ').map(Number));
 
-const dp = Array.from({ length: n + 1 }, () =>
-  Array.from({ length: n + 1 }, () => new Array(3).fill(0))
-);
+const max = Array.from({ length: n }, () => new Array(3).fill(0));
+const min = Array.from({ length: n }, () => new Array(3).fill(0));
 
-dp[1][2][0] = 1;
-
-// 첫 행 초기화 (가로로만 이동 가능)
-for (let j = 3; j <= n; j++) {
-  if (house[0][j - 1] === 0) {
-    dp[1][j][0] = dp[1][j - 1][0];
-  }
+for (let i = 0; i <= 2; i++) {
+  max[0][i] = game[0][i];
+  min[0][i] = game[0][i];
 }
 
-//0 = 가로, 1 = 세로, 2 = 대각선
-for (let i = 2; i <= n; i++) {
-  for (let j = 2; j <= n; j++) {
-    // 현재 칸이 벽이면 스킵
-    if (house[i - 1][j - 1] === 1) continue;
+for (let i = 1; i < n; i++) {
+  max[i][0] = Math.max(max[i - 1][0], max[i - 1][1]) + game[i][0];
+  min[i][0] = Math.min(min[i - 1][0], min[i - 1][1]) + game[i][0];
 
-    // 가로(0): 왼쪽에서 가로 또는 대각선으로 올 수 있음
-    if (house[i - 1][j - 1] === 0) {
-      dp[i][j][0] = dp[i][j - 1][0] + dp[i][j - 1][2];
-      dp[i][j][1] = dp[i - 1][j][1] + dp[i - 1][j][2];
-    }
+  max[i][1] =
+    Math.max(max[i - 1][1], max[i - 1][0], max[i - 1][2]) + game[i][1];
+  min[i][1] =
+    Math.min(min[i - 1][1], min[i - 1][0], min[i - 1][2]) + game[i][1];
 
-    // 대각선(2): 3칸 모두 비어있어야 함
-    if (
-      house[i - 1][j - 1] === 0 &&
-      house[i - 2][j - 1] === 0 &&
-      house[i - 1][j - 2] === 0
-    ) {
-      dp[i][j][2] =
-        dp[i - 1][j - 1][0] + dp[i - 1][j - 1][1] + dp[i - 1][j - 1][2];
-    }
-  }
+  max[i][2] = Math.max(max[i - 1][2], max[i - 1][1]) + game[i][2];
+  min[i][2] = Math.min(min[i - 1][2], min[i - 1][1]) + game[i][2];
 }
 
-const result = dp[n][n].reduce((acc, cum) => acc + cum, 0);
-console.log(result);
+console.log(Math.max(...max[n - 1]), Math.min(...min[n - 1]));
