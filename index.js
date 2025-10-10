@@ -7,27 +7,30 @@ let input = require('fs')
 
 const n = +input[0];
 
-const game = input.slice(1).map(e => e.split(' ').map(Number));
+const arr = input[1].split(' ').map(Number);
 
-const max = Array.from({ length: n }, () => new Array(3).fill(0));
-const min = Array.from({ length: n }, () => new Array(3).fill(0));
+const dp = new Array(n).fill(1);
+const prev = new Array(n).fill(-1);
 
-for (let i = 0; i <= 2; i++) {
-  max[0][i] = game[0][i];
-  min[0][i] = game[0][i];
+for (let i = 0; i < n; i++) {
+  for (let j = 0; j < i; j++) {
+    if (arr[j] < arr[i] && dp[i] < dp[j] + 1) {
+      dp[i] = dp[j] + 1;
+      prev[i] = j;
+    }
+  }
 }
 
-for (let i = 1; i < n; i++) {
-  max[i][0] = Math.max(max[i - 1][0], max[i - 1][1]) + game[i][0];
-  min[i][0] = Math.min(min[i - 1][0], min[i - 1][1]) + game[i][0];
+let maxLength = Math.max(...dp);
+let maxIndex = dp.indexOf(maxLength);
 
-  max[i][1] =
-    Math.max(max[i - 1][1], max[i - 1][0], max[i - 1][2]) + game[i][1];
-  min[i][1] =
-    Math.min(min[i - 1][1], min[i - 1][0], min[i - 1][2]) + game[i][1];
+const result = [];
 
-  max[i][2] = Math.max(max[i - 1][2], max[i - 1][1]) + game[i][2];
-  min[i][2] = Math.min(min[i - 1][2], min[i - 1][1]) + game[i][2];
+while (maxIndex !== -1) {
+  result.push(arr[maxIndex]);
+  maxIndex = prev[maxIndex];
 }
+result.reverse();
 
-console.log(Math.max(...max[n - 1]), Math.min(...min[n - 1]));
+console.log(maxLength);
+console.log(result.join(' '));
