@@ -6,35 +6,30 @@ let input = require('fs')
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
 const n = +input[0];
-let deque = [];
-let result = [];
-for (let i = 1; i <= n; i++) {
-  const [order, num] = input[i].trim().split(' ');
-  switch (order) {
-    case 'push_front':
-      deque.unshift(+num);
-      break; // 이게 핵심!
-    case 'push_back':
-      deque.push(+num);
-      break;
-    case 'pop_front':
-      result.push(deque.length ? deque.shift() : -1);
-      break;
-    case 'pop_back':
-      result.push(deque.length ? deque.pop() : -1);
-      break;
-    case 'size':
-      result.push(deque.length);
-      break;
-    case 'empty':
-      result.push(deque.length ? 0 : 1);
-      break;
-    case 'front':
-      result.push(deque.length ? deque[0] : -1);
-      break;
-    case 'back':
-      result.push(deque.length ? deque[deque.length - 1] : -1);
-      break;
+
+for (let i = 1; i < input.length; i += 2) {
+  const [num, print] = input[i].split(' ').map(Number);
+  const priorities = input[i + 1].split(' ').map(Number);
+
+  const queue = [];
+  for (let j = 0; j < num; j++) {
+    queue.push({ index: j, priority: priorities[j] });
+  }
+
+  let count = 0;
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+
+    const hasHigherPriority = queue.some(e => e.priority > current.priority);
+    if (hasHigherPriority) {
+      queue.push(current);
+    } else {
+      count += 1;
+      if (current.index === print) {
+        console.log(count);
+        break;
+      }
+    }
   }
 }
-console.log(result.join('\n'));
