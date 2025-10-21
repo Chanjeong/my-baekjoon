@@ -5,15 +5,28 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const parts = input[0].split('-');
+//#13536 - 괄호 부분 문자열 쿼리
+const chars = input[0];
+const n = +input[1];
 
-let result = parts[0].split('+').reduce((acc, cum) => acc + Number(cum), 0);
+for (let i = 2; i <= n + 1; i++) {
+  const [first, last] = input[i].split(' ').map(Number);
+  const substring = chars.slice(first - 1, last);
 
-for (let i = 1; i < parts.length; i++) {
-  const sum = parts[i].split('+').reduce((acc, cum) => acc + Number(cum), 0);
-  result -= sum;
+  let stack = [];
+  let count = 0;
+  for (let j = 0; j < substring.length; j++) {
+    if (substring[j] === ')') {
+      if (stack.length > 0) {
+        stack.pop();
+        count += 2;
+      } else continue;
+    } else {
+      stack.push(substring[j]);
+    }
+  }
+  console.log(count);
 }
-console.log(result);
 //9012 괄호
 //10828 스택
 //10773 제로
