@@ -5,40 +5,55 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-//#13536 - 괄호 부분 문자열 쿼리
-const chars = input[0];
-const n = +input[1];
+const [n, m, v] = input[0].split(' ').map(Number);
 
-for (let i = 2; i <= n + 1; i++) {
-  const [first, last] = input[i].split(' ').map(Number);
-  const substring = chars.slice(first - 1, last);
+const graph = Array.from({ length: n + 1 }, () => []);
 
-  let stack = [];
-  let count = 0;
-  for (let j = 0; j < substring.length; j++) {
-    if (substring[j] === ')') {
-      if (stack.length > 0) {
-        stack.pop();
-        count += 2;
-      } else continue;
-    } else {
-      stack.push(substring[j]);
+for (let i = 1; i <= m; i++) {
+  const [a, b] = input[i].split(' ').map(Number);
+  graph[a].push(b);
+  graph[b].push(a);
+}
+
+for (let i = 1; i <= n; i++) {
+  graph[i].sort((a, b) => a - b);
+}
+
+let dfsVisited = new Array(n).fill(false);
+let dfsResult = [];
+
+function dfs(node) {
+  dfsVisited[node] = true;
+  dfsResult.push(node);
+
+  for (let next of graph[node]) {
+    if (!dfsVisited[next]) {
+      dfs(next);
     }
   }
-  console.log(count);
 }
-//9012 괄호
-//10828 스택
-//10773 제로
-//2164 카드2
-//10816 숫자 카드 2
-//1874 스택 수열
-//1764 듣보잡
-//1158 요세푸스 문제
-//4949 균형잡힌 세상
-//10815 숫자 카드
-//9012 괄호
-//10828 스택
-//10773 제로
-//2164 카드2
-//10816 숫자 카드
+
+let bfsVisited = new Array(n).fill(false);
+let bfsResult = [];
+
+function bfs(start) {
+  const queue = [start];
+  bfsVisited[start] = true;
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+    bfsResult.push(node);
+
+    for (let next of graph[node]) {
+      if (!bfsVisited[next]) {
+        bfsVisited[next] = true;
+        queue.push(next);
+      }
+    }
+  }
+}
+dfs(v);
+bfs(v);
+
+console.log(dfsResult.join(' '));
+console.log(bfsResult.join(' '));
