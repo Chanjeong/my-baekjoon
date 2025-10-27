@@ -5,55 +5,25 @@ let input = require('fs')
   .split('\n');
 // let input = require("fs").readFileSync("/dev/stdin").toString().trim().split('\n');
 
-const [n, m, v] = input[0].split(' ').map(Number);
+let stack = [];
+let count = 0;
+const steel = input[0].split('');
 
-const graph = Array.from({ length: n + 1 }, () => []);
+for (let i = 0; i < steel.length; i++) {
+  if (steel[i] === '(') {
+    stack.push('(');
+  } else {
+    // 닫는 괄호를 만났을 때
+    stack.pop();
 
-for (let i = 1; i <= m; i++) {
-  const [a, b] = input[i].split(' ').map(Number);
-  graph[a].push(b);
-  graph[b].push(a);
-}
-
-for (let i = 1; i <= n; i++) {
-  graph[i].sort((a, b) => a - b);
-}
-
-let dfsVisited = new Array(n).fill(false);
-let dfsResult = [];
-
-function dfs(node) {
-  dfsVisited[node] = true;
-  dfsResult.push(node);
-
-  for (let next of graph[node]) {
-    if (!dfsVisited[next]) {
-      dfs(next);
+    // 이전 문자가 '('면 레이저
+    if (steel[i - 1] === '(') {
+      count += stack.length; // 레이저로 잘린 조각들
+    } else {
+      // 이전 문자가 ')'면 쇠막대기 끝
+      count += 1; // 막대기 1개 추가
     }
   }
 }
 
-let bfsVisited = new Array(n).fill(false);
-let bfsResult = [];
-
-function bfs(start) {
-  const queue = [start];
-  bfsVisited[start] = true;
-
-  while (queue.length > 0) {
-    const node = queue.shift();
-    bfsResult.push(node);
-
-    for (let next of graph[node]) {
-      if (!bfsVisited[next]) {
-        bfsVisited[next] = true;
-        queue.push(next);
-      }
-    }
-  }
-}
-dfs(v);
-bfs(v);
-
-console.log(dfsResult.join(' '));
-console.log(bfsResult.join(' '));
+console.log(count);
